@@ -37,6 +37,8 @@ import com.project.fintrack.data.models.ChartData
 import com.project.fintrack.data.models.TransactionCategory
 import com.project.fintrack.data.models.TransactionEntity
 import com.project.fintrack.data.models.TransactionType
+import com.project.fintrack.presentation.components.TransactionItem
+import com.project.fintrack.presentation.viewmodels.HomeViewModel
 import com.project.fintrack.ui.theme.FinTrackGreen
 import com.project.fintrack.ui.theme.FinTrackPrimary
 import com.project.fintrack.ui.theme.FinTrackRed
@@ -45,88 +47,98 @@ import com.project.fintrack.utils.formatToRupiah
 import com.project.fintrack.utils.getCategoryColor
 import java.util.Date
 
-val transactionsDummy = listOf(
-    TransactionEntity(
-        id = 1,
-        amount = 50000.0,
-        date = Date(2024, 11, 15), // November 15, 2024
-        description = "Shopping",
-        category = TransactionCategory.SHOPPING,
-        type = TransactionType.EXPENSE
-    ),
-    TransactionEntity(
-        id = 2,
-        amount = 30000.0,
-        date = Date(2024, 11, 15),
-        description = "Food",
-        category = TransactionCategory.FOOD,
-        type = TransactionType.EXPENSE
-    ),
-    TransactionEntity(
-        id = 3,
-        amount = 2000000.0,
-        date = Date(2024, 11, 14),
-        description = "Investment",
-        category = TransactionCategory.INVESTMENT,
-        type = TransactionType.EXPENSE
-    ),
-    TransactionEntity(
-        id = 4,
-        amount = 45000.0,
-        date = Date(2024, 11, 14),
-        description = "Entertainment",
-        category = TransactionCategory.ENTERTAINMENT,
-        type = TransactionType.EXPENSE
-    ),
-    TransactionEntity(
-        id = 5,
-        amount = 25000.0,
-        date = Date(2024, 11, 13),
-        description = "Food",
-        category = TransactionCategory.SALARY,
-        type = TransactionType.INCOME
-    ),
-    TransactionEntity(
-        id = 6,
-        amount = 25000.0,
-        date = Date(2024, 11, 13),
-        description = "Food",
-        category = TransactionCategory.FOOD,
-        type = TransactionType.EXPENSE
-    ),
-    TransactionEntity(
-        id = 7,
-        amount = 25000.0,
-        date = Date(2024, 11, 13),
-        description = "Food",
-        category = TransactionCategory.FOOD,
-        type = TransactionType.EXPENSE
-    ),
-    TransactionEntity(
-        id = 8,
-        amount = 25000.0,
-        date = Date(2024, 11, 13),
-        description = "Food",
-        category = TransactionCategory.SALARY,
-        type = TransactionType.INCOME
-    )
-)
-
-val chartDataDummy = listOf(
-    ChartData("Food", 600000, Color.Red, 60),
-    ChartData("Entertainment", 600000, Color.Red, 20),
-    ChartData("Education", 600000, Color.Red, 10),
-    ChartData("Others", 600000, Color.Red, 10),
-)
+//val transactionsDummy = listOf(
+//    TransactionEntity(
+//        id = 1,
+//        amount = 50000.0,
+//        date = Date(2024, 11, 15), // November 15, 2024
+//        description = "Shopping",
+//        category = TransactionCategory.SHOPPING,
+//        type = TransactionType.EXPENSE
+//    ),
+//    TransactionEntity(
+//        id = 2,
+//        amount = 30000.0,
+//        date = Date(2024, 11, 15),
+//        description = "Food",
+//        category = TransactionCategory.FOOD,
+//        type = TransactionType.EXPENSE
+//    ),
+//    TransactionEntity(
+//        id = 3,
+//        amount = 2000000.0,
+//        date = Date(2024, 11, 14),
+//        description = "Investment",
+//        category = TransactionCategory.INVESTMENT,
+//        type = TransactionType.EXPENSE
+//    ),
+//    TransactionEntity(
+//        id = 4,
+//        amount = 45000.0,
+//        date = Date(2024, 11, 14),
+//        description = "Entertainment",
+//        category = TransactionCategory.ENTERTAINMENT,
+//        type = TransactionType.EXPENSE
+//    ),
+//    TransactionEntity(
+//        id = 5,
+//        amount = 25000.0,
+//        date = Date(2024, 11, 13),
+//        description = "Food",
+//        category = TransactionCategory.SALARY,
+//        type = TransactionType.INCOME
+//    ),
+//    TransactionEntity(
+//        id = 6,
+//        amount = 25000.0,
+//        date = Date(2024, 11, 13),
+//        description = "Food",
+//        category = TransactionCategory.FOOD,
+//        type = TransactionType.EXPENSE
+//    ),
+//    TransactionEntity(
+//        id = 7,
+//        amount = 25000.0,
+//        date = Date(2024, 11, 13),
+//        description = "Food",
+//        category = TransactionCategory.FOOD,
+//        type = TransactionType.EXPENSE
+//    ),
+//    TransactionEntity(
+//        id = 8,
+//        amount = 25000.0,
+//        date = Date(2024, 11, 13),
+//        description = "Food",
+//        category = TransactionCategory.SALARY,
+//        type = TransactionType.INCOME
+//    )
+//)
+//
+//val chartDataDummy = listOf(
+//    ChartData("Food", 600000, Color.Red, 60),
+//    ChartData("Entertainment", 600000, Color.Red, 20),
+//    ChartData("Education", 600000, Color.Red, 10),
+//    ChartData("Others", 600000, Color.Red, 10),
+//)
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
+    val recentTransactions = viewModel.recentTransactions.value
+    val chartData = viewModel.chartData.value
+
     Column(
-        modifier = Modifier.fillMaxSize().padding(bottom = 52.dp).verticalScroll(rememberScrollState())
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 52.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         HeaderSection()
-        ChartSection(chartDataDummy)
-        RecentTransactionsSection(transactionsDummy)
+        if (chartData != null) {
+            ChartSection(chartData)
+        }
+        if (recentTransactions != null) {
+            RecentTransactionsSection(recentTransactions)
+        }
     }
 }
 
@@ -144,8 +156,15 @@ fun HeaderSection() {
             modifier = Modifier.
                 padding(start = 16.dp, end = 16.dp, top = 32.dp, bottom = 152.dp)
         ) {
-            Text(text = "Good Morning,", color = Color.White)
-            Text(text = "Fin Friend", fontWeight = FontWeight.Bold, color = Color.White, style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = "Good Morning,",
+                color = Color.White
+            )
+            Text(
+                text = "Fin Friend",
+                fontWeight = FontWeight.Bold,
+                color = Color.White, style = MaterialTheme.typography.titleMedium
+            )
             Spacer(modifier = Modifier.height(32.dp))
             Row {
                 Column(
@@ -181,7 +200,7 @@ fun ChartSection(data: List<ChartData>) {
             .fillMaxWidth()
             .padding(16.dp)
             .offset(y = (-112).dp),
-        elevation = CardDefaults.cardElevation(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
@@ -228,43 +247,5 @@ fun RecentTransactionsSection(transactions: List<TransactionEntity>) {
         transactions.forEach { transaction ->
             TransactionItem(transaction = transaction)
         }
-    }
-
-}
-
-@Composable
-fun TransactionItem(transaction: TransactionEntity) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        val amountText = if (transaction.type == TransactionType.INCOME) {
-            "+ ${formatToRupiah(transaction.amount)}"
-        } else {
-            "- ${formatToRupiah(transaction.amount)}"
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box( modifier = Modifier
-                .size(44.dp)
-                .clip(CircleShape)
-                .background(color = getCategoryColor(transaction.category))
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column {
-                Text(text = transaction.category.toString(), fontWeight = FontWeight.Bold)
-                Text(text = formatDate(transaction.date), style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
-            }
-        }
-        Text(
-            text = amountText,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = if (transaction.type == TransactionType.INCOME) FinTrackGreen else FinTrackRed
-        )
     }
 }

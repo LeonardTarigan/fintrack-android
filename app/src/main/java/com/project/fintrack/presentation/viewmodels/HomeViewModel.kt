@@ -1,26 +1,36 @@
 package com.project.fintrack.presentation.viewmodels
 
+import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.project.fintrack.data.models.ChartData
 import com.project.fintrack.data.models.TransactionCategory
 import com.project.fintrack.data.models.TransactionEntity
 import com.project.fintrack.data.models.TransactionType
+import com.project.fintrack.data.repository.Repository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
 
 class HomeViewModel : ViewModel() {
-    private val _transactions = MutableStateFlow<List<TransactionEntity>>(emptyList())
-    val transactions: StateFlow<List<TransactionEntity>> = _transactions
+//    val repository: Repository = Repository()
+
+    private val _recentTransactions = MutableLiveData<List<TransactionEntity>>(emptyList())
+    private val _chartData = MutableLiveData<List<ChartData>>(emptyList())
+
+    val recentTransactions: LiveData<List<TransactionEntity>> = _recentTransactions
+    val chartData: LiveData<List<ChartData>> = _chartData
 
     init {
-        loadDummyTransactions()
+        loadDummyData()
     }
 
-    private fun loadDummyTransactions() {
+    private fun loadDummyData() {
         viewModelScope.launch {
-            _transactions.value = listOf(
+            _recentTransactions.value = listOf(
                 TransactionEntity(
                     id = 1,
                     amount = 50000.0,
@@ -61,6 +71,13 @@ class HomeViewModel : ViewModel() {
                     category = TransactionCategory.FOOD,
                     type = TransactionType.EXPENSE
                 )
+            )
+
+            _chartData.value = listOf(
+                ChartData("Food", 600000, Color.Red, 60),
+                ChartData("Entertainment", 600000, Color.Red, 20),
+                ChartData("Education", 600000, Color.Red, 10),
+                ChartData("Others", 600000, Color.Red, 10),
             )
         }
     }
