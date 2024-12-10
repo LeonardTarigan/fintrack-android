@@ -18,7 +18,7 @@ import java.util.*
 
 @Preview
 @Composable
-fun EditTransactionScreen() {
+fun EditTransactionScreen(transactionId: Int) {
     var transactionType by remember { mutableStateOf("Spending") }
     var category by remember { mutableStateOf("Entertainment") }
     var amount by remember { mutableStateOf("") }

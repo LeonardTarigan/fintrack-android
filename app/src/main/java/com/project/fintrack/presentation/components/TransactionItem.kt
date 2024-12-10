@@ -1,6 +1,7 @@
 package com.project.fintrack.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.project.fintrack.data.models.TransactionEntity
 import com.project.fintrack.data.models.TransactionType
 import com.project.fintrack.ui.theme.FinTrackGreen
@@ -29,11 +31,12 @@ import com.project.fintrack.utils.formatToRupiah
 import com.project.fintrack.utils.getCategoryColor
 
 @Composable
-fun TransactionItem(transaction: TransactionEntity) {
+fun TransactionItem(transaction: TransactionEntity,  onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         val amountText = if (transaction.type == TransactionType.INCOME) {

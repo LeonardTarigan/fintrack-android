@@ -21,19 +21,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.project.fintrack.data.models.ChartData
 import com.project.fintrack.data.models.TransactionEntity
 import com.project.fintrack.presentation.components.TransactionItem
@@ -44,7 +43,7 @@ import com.project.fintrack.utils.formatToRupiah
 
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel, navController: NavHostController) {
     val recentTransactions = viewModel.recentTransactions.value
     val chartData = viewModel.chartData.value
     val balanceReport = viewModel.balanceReport.value
@@ -52,7 +51,6 @@ fun HomeScreen(viewModel: HomeViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 52.dp)
             .verticalScroll(rememberScrollState())
     ) {
         if (balanceReport != null) {
@@ -65,7 +63,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
             ChartSection(chartData)
         }
         if (recentTransactions != null) {
-            RecentTransactionsSection(recentTransactions)
+            RecentTransactionsSection(recentTransactions, navController)
         }
     }
 }
@@ -174,7 +172,7 @@ fun ChartSection(data: List<ChartData>) {
 }
 
 @Composable
-fun RecentTransactionsSection(transactions: List<TransactionEntity>) {
+fun RecentTransactionsSection(transactions: List<TransactionEntity>, navController: NavHostController) {
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -183,7 +181,9 @@ fun RecentTransactionsSection(transactions: List<TransactionEntity>) {
     ) {
         Text(text = "Recent Cash Flow", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 16.dp))
         transactions.forEach { transaction ->
-            TransactionItem(transaction = transaction)
+            TransactionItem(transaction = transaction) {
+                navController.navigate("editTransaction/${transaction.id}")
+            }
         }
     }
 }
