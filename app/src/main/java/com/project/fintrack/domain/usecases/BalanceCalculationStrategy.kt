@@ -7,12 +7,11 @@ import com.project.fintrack.domain.strategies.ReportStrategy
 
 class BalanceCalculationStrategy : ReportStrategy<BalanceReport> {
     override fun generateReport(transactions: List<TransactionEntity>): BalanceReport {
-        // Calculate total income and expense based on transaction type
         val income = transactions.filter { it.type == TransactionType.INCOME }.sumOf { it.amount }
         val expense = transactions.filter { it.type == TransactionType.EXPENSE }.sumOf { it.amount }
 
-        // Calculate the balance as income minus expense
-        val balance = income - expense
+        var balance = income - expense
+        if (balance < 0) balance = 0.0
 
         return BalanceReport(income, expense, balance)
     }

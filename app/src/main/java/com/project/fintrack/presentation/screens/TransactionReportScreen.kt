@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.project.fintrack.data.models.BalanceReport
 import com.project.fintrack.data.models.MonthlyTransactions
 import com.project.fintrack.data.models.TopSpending
 import com.project.fintrack.presentation.components.TopSpendingItem
@@ -38,14 +39,16 @@ import com.project.fintrack.utils.formatToRupiah
 fun ReportScreen(viewModel: TransactionReportViewModel, navController: NavController) {
     val topSpendingData = viewModel.topSpendingData.value
     val monthlyTransactions = viewModel.monthlyTransactions.value
+    val balanceReport = viewModel.balanceReport.value
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 72.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        OverviewSection()
+        if (balanceReport != null) {
+            OverviewSection(balanceReport)
+        }
         if (topSpendingData != null) {
             TopSpendingSection(topSpendingData)
         }
@@ -56,7 +59,7 @@ fun ReportScreen(viewModel: TransactionReportViewModel, navController: NavContro
 }
 
 @Composable
-fun OverviewSection() {
+fun OverviewSection(balanceReport: BalanceReport) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,7 +87,7 @@ fun OverviewSection() {
                     color = Color.White
                 )
                 Text(
-                    text = formatToRupiah(1000000.0),
+                    text = formatToRupiah(balanceReport.balance),
                     color = Color.White,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
@@ -113,7 +116,7 @@ fun OverviewSection() {
                        color = FinTrackGreen,
                    )
                    Text(
-                       text = formatToRupiah(1000000.0),
+                       text = formatToRupiah(balanceReport.income),
                        style = MaterialTheme.typography.titleMedium,
                        fontWeight = FontWeight.SemiBold
                    )
@@ -137,7 +140,7 @@ fun OverviewSection() {
                         color = FinTrackRed
                     )
                     Text(
-                        text = formatToRupiah(1000000.0),
+                        text = formatToRupiah(balanceReport.expense),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )

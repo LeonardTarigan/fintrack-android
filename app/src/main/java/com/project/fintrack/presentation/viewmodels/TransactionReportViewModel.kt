@@ -4,75 +4,57 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.project.fintrack.data.models.BalanceReport
 import com.project.fintrack.data.models.MonthlyTransactions
 import com.project.fintrack.data.models.TopSpending
 import com.project.fintrack.data.models.TransactionCategory
 import com.project.fintrack.data.models.TransactionEntity
 import com.project.fintrack.data.models.TransactionType
 import com.project.fintrack.data.repository.Repository
+import com.project.fintrack.domain.strategies.ReportStrategy
+import com.project.fintrack.domain.usecases.BalanceCalculationStrategy
+import com.project.fintrack.domain.usecases.MonthlySpendingStrategy
+import com.project.fintrack.domain.usecases.TopSpendingStrategy
 import kotlinx.coroutines.launch
 import java.util.Date
 
 class TransactionReportViewModel(private val repository: Repository) : ViewModel() {
 
+    private var reportStrategy: ReportStrategy<*>? = null
+
+    private val _balanceReport = MutableLiveData<BalanceReport>()
     private val _topSpendingData = MutableLiveData<List<TopSpending>>(emptyList())
     private val _monthlyTransactions = MutableLiveData<List<MonthlyTransactions>>(emptyList())
 
-    val topSpendingData: LiveData<List<TopSpending>> = _topSpendingData
-    val monthlyTransactions: LiveData<List<MonthlyTransactions>> = _monthlyTransactions
+    val balanceReport: LiveData<BalanceReport> get() = _balanceReport
+    val topSpendingData: LiveData<List<TopSpending>> get() = _topSpendingData
+    val monthlyTransactions: LiveData<List<MonthlyTransactions>> get() = _monthlyTransactions
 
     init {
-        loadDummyData()
+        getReportData()
     }
 
-    private fun loadDummyData() {
+    private fun getReportData() {
         viewModelScope.launch {
-            _topSpendingData.value = listOf(
-                TopSpending(TransactionCategory.ENTERTAINMENT, 45.73),
-                TopSpending(TransactionCategory.FOOD, 37.29),
-                TopSpending(TransactionCategory.SHOPPING, 21.4),
-                TopSpending(TransactionCategory.EDUCATION, 17.95),
-                TopSpending(TransactionCategory.TRANSPORTATION, 14.33),
-            )
+            val transactions = repository.getAllTransactions()
 
-            _monthlyTransactions.value = listOf(
-                MonthlyTransactions("November", listOf(
-                    TransactionEntity(
-                        id = 1,
-                        amount = 50000.0,
-                        date = Date(2024, 11, 15),
-                        description = "Shopping",
-                        category = TransactionCategory.SHOPPING,
-                        type = TransactionType.EXPENSE
-                    ),
-                    TransactionEntity(
-                        id = 2,
-                        amount = 30000.0,
-                        date = Date(2024, 11, 15),
-                        description = "Food",
-                        category = TransactionCategory.FOOD,
-                        type = TransactionType.EXPENSE
-                    ),
-                )),
-                MonthlyTransactions("October", listOf(
-                    TransactionEntity(
-                        id = 3,
-                        amount = 50000.0,
-                        date = Date(2024, 11, 15),
-                        description = "Shopping",
-                        category = TransactionCategory.SHOPPING,
-                        type = TransactionType.EXPENSE
-                    ),
-                    TransactionEntity(
-                        id = 4,
-                        amount = 30000.0,
-                        date = Date(2024, 11, 15),
-                        description = "Food",
-                        category = TransactionCategory.FOOD,
-                        type = TransactionType.EXPENSE
-                    ),
-                )),
-            )
+            setStrategy(BalanceCalculationStrategy())
+            _balanceReport.value = executeStrategy<BalanceReport>(transactions)
+
+            setStrategy(TopSpendingStrategy())
+            _topSpendingData.value = executeStrategy<List<TopSpending>>(transactions)
+
+            setStrategy(MonthlySpendingStrategy())
+            _monthlyTransactions.value = executeStrategy<List<MonthlyTransactions>>(transactions)
         }
+    }
+
+    private fun setStrategy(strategy: ReportStrategy<*>) {
+        reportStrategy = strategy
+    }
+
+    private fun <T> executeStrategy(transactions: List<TransactionEntity>): T? {
+        return reportStrategy?.generateReport(transactions) as? T
     }
 }
