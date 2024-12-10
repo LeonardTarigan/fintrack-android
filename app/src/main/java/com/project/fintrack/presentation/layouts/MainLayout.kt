@@ -27,6 +27,7 @@ import com.project.fintrack.data.repository.Repository
 import com.project.fintrack.presentation.screens.CreateTransactionScreen
 import com.project.fintrack.presentation.screens.HomeScreen
 import com.project.fintrack.presentation.screens.ReportScreen
+import com.project.fintrack.presentation.viewmodels.CreateTransactionViewModel
 import com.project.fintrack.presentation.viewmodels.HomeViewModel
 import com.project.fintrack.presentation.viewmodels.TransactionReportViewModel
 
@@ -73,7 +74,7 @@ fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int, activity: C
 
     when(selectedIndex) {
         0 -> HomeScreen(viewModel = HomeViewModel(repository))
-        1 -> CreateTransactionScreen()
+        1 -> CreateTransactionScreen(viewModel = CreateTransactionViewModel(repository))
         2 -> ReportScreen(viewModel = TransactionReportViewModel(repository))
     }
 }

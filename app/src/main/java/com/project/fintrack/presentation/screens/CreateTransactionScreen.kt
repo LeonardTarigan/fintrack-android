@@ -11,11 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.project.fintrack.presentation.viewmodels.CreateTransactionViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun CreateTransactionScreen() {
+fun CreateTransactionScreen(viewModel: CreateTransactionViewModel) {
     var transactionType by remember { mutableStateOf("Spending") }
     var category by remember { mutableStateOf("Entertainment") }
     var amount by remember { mutableStateOf("") }
