@@ -11,6 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.project.fintrack.data.models.TransactionCategory
+import com.project.fintrack.data.models.TransactionEntity
+import com.project.fintrack.data.models.TransactionType
 import com.project.fintrack.presentation.viewmodels.CreateTransactionViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -82,7 +85,7 @@ fun CreateTransactionScreen(viewModel: CreateTransactionViewModel) {
                 expanded = isCategoryDropdownExpanded,
                 onDismissRequest = { isCategoryDropdownExpanded = false }
             ) {
-                listOf("Entertainment", "Food", "Transport", "Other").forEach { cat ->
+                listOf("Entertainment", "Food", "Transportation", "Other").forEach { cat ->
                     DropdownMenuItem(
                         text = { Text(text = cat) },
                         onClick = {
@@ -142,7 +145,22 @@ fun CreateTransactionScreen(viewModel: CreateTransactionViewModel) {
         Button(
             onClick = {
                 // Logic to save transaction
+                if(transactionType == "Spending"){
+                    transactionType = "EXPENSE"
+                } else{
+                    transactionType = "INCOME"
+                }
                 println("Transaction Saved: Type=$transactionType, Category=$category, Amount=$amount, Date=$date, Notes=$notes")
+                val transaction = TransactionEntity(
+                    type = TransactionType.valueOf(transactionType),
+                    category = TransactionCategory.valueOf(category.toUpperCase()),
+                    amount = amount.toDoubleOrNull() ?: 0.0,
+                    date = Date(),
+                    description = notes, // Pastikan nama sesuai dengan model
+                    id = 0
+                )
+                viewModel.createTransactions(transaction)
+
             },
             modifier = Modifier
                 .fillMaxWidth()
