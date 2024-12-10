@@ -21,10 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.project.fintrack.data.db.LocalDatabase
 import com.project.fintrack.data.models.NavItem
 import com.project.fintrack.data.repository.Repository
 import com.project.fintrack.presentation.screens.CreateTransactionScreen
+import com.project.fintrack.presentation.screens.EditTransactionScreen
 import com.project.fintrack.presentation.screens.HomeScreen
 import com.project.fintrack.presentation.screens.ReportScreen
 import com.project.fintrack.presentation.viewmodels.HomeViewModel
@@ -33,15 +37,14 @@ import com.project.fintrack.presentation.viewmodels.TransactionReportViewModel
 
 @Composable
 fun MainLayout(modifier: Modifier = Modifier, activity: ComponentActivity) {
+    val navController = rememberNavController()
     val navItems = listOf(
         NavItem("Home", Icons.Filled.Home),
         NavItem("Add", Icons.Filled.AddCircle),
         NavItem("Report", Icons.Filled.Info)
     )
 
-    var selectedIndex by remember {
-        mutableIntStateOf(0)
-    }
+    var selectedIndex by remember { mutableIntStateOf(0) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -50,7 +53,14 @@ fun MainLayout(modifier: Modifier = Modifier, activity: ComponentActivity) {
                 navItems.forEachIndexed { index, navItem ->
                     NavigationBarItem(
                         selected = selectedIndex == index,
-                        onClick = { selectedIndex = index },
+                        onClick = {
+                            selectedIndex = index
+                            when (index) {
+                                0 -> navController.navigate("home")
+                                1 -> navController.navigate("createTransaction")
+                                2 -> navController.navigate("report")
+                            }
+                        },
                         icon = {
                             Icon(imageVector = navItem.icon, contentDescription = navItem.label)
                         },
@@ -62,19 +72,29 @@ fun MainLayout(modifier: Modifier = Modifier, activity: ComponentActivity) {
             }
         }
     ) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding), selectedIndex, activity)
-    }
-}
+        NavHost(
+            navController = navController,
+            startDestination = "home",
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            val db = LocalDatabase.getInstance(activity)
+            val repository = Repository(db)
 
-@Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int, activity: ComponentActivity) {
-    val context = LocalContext.current
-    val db = LocalDatabase.getInstance(context)
-    val repository = Repository(db)
-
-    when(selectedIndex) {
-        0 -> HomeScreen(viewModel = HomeViewModel(repository))
-        1 -> CreateTransactionScreen()
-        2 -> ReportScreen(viewModel = TransactionReportViewModel(repository))
+            composable("home") {
+                HomeScreen(viewModel = HomeViewModel(repository), navController)
+            }
+            composable("createTransaction") {
+                CreateTransactionScreen()
+            }
+            composable("report") {
+                ReportScreen(viewModel = TransactionReportViewModel(repository), navController)
+            }
+            composable("editTransaction/{transactionId}") { backStackEntry ->
+                val transactionId = backStackEntry.arguments?.getString("transactionId")?.toInt()
+                if (transactionId != null) {
+                    EditTransactionScreen(transactionId = transactionId)
+                }
+            }
+        }
     }
 }

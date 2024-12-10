@@ -21,129 +21,55 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.project.fintrack.data.models.ChartData
-import com.project.fintrack.data.models.TransactionCategory
 import com.project.fintrack.data.models.TransactionEntity
-import com.project.fintrack.data.models.TransactionType
 import com.project.fintrack.presentation.components.TransactionItem
 import com.project.fintrack.presentation.viewmodels.HomeViewModel
-import com.project.fintrack.ui.theme.FinTrackGreen
 import com.project.fintrack.ui.theme.FinTrackPrimary
-import com.project.fintrack.ui.theme.FinTrackRed
-import com.project.fintrack.utils.formatDate
 import com.project.fintrack.utils.formatToRupiah
-import com.project.fintrack.utils.getCategoryColor
-import java.util.Date
 
-//val transactionsDummy = listOf(
-//    TransactionEntity(
-//        id = 1,
-//        amount = 50000.0,
-//        date = Date(2024, 11, 15), // November 15, 2024
-//        description = "Shopping",
-//        category = TransactionCategory.SHOPPING,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 2,
-//        amount = 30000.0,
-//        date = Date(2024, 11, 15),
-//        description = "Food",
-//        category = TransactionCategory.FOOD,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 3,
-//        amount = 2000000.0,
-//        date = Date(2024, 11, 14),
-//        description = "Investment",
-//        category = TransactionCategory.INVESTMENT,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 4,
-//        amount = 45000.0,
-//        date = Date(2024, 11, 14),
-//        description = "Entertainment",
-//        category = TransactionCategory.ENTERTAINMENT,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 5,
-//        amount = 25000.0,
-//        date = Date(2024, 11, 13),
-//        description = "Food",
-//        category = TransactionCategory.SALARY,
-//        type = TransactionType.INCOME
-//    ),
-//    TransactionEntity(
-//        id = 6,
-//        amount = 25000.0,
-//        date = Date(2024, 11, 13),
-//        description = "Food",
-//        category = TransactionCategory.FOOD,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 7,
-//        amount = 25000.0,
-//        date = Date(2024, 11, 13),
-//        description = "Food",
-//        category = TransactionCategory.FOOD,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 8,
-//        amount = 25000.0,
-//        date = Date(2024, 11, 13),
-//        description = "Food",
-//        category = TransactionCategory.SALARY,
-//        type = TransactionType.INCOME
-//    )
-//)
-//
-//val chartDataDummy = listOf(
-//    ChartData("Food", 600000, Color.Red, 60),
-//    ChartData("Entertainment", 600000, Color.Red, 20),
-//    ChartData("Education", 600000, Color.Red, 10),
-//    ChartData("Others", 600000, Color.Red, 10),
-//)
+
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel, navController: NavHostController) {
     val recentTransactions = viewModel.recentTransactions.value
     val chartData = viewModel.chartData.value
+    val balanceReport = viewModel.balanceReport.value
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 52.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        HeaderSection()
+        if (balanceReport != null) {
+            HeaderSection(
+                income = balanceReport.income,
+                expense = balanceReport.expense
+            )
+        }
         if (chartData != null) {
             ChartSection(chartData)
         }
         if (recentTransactions != null) {
-            RecentTransactionsSection(recentTransactions)
+            RecentTransactionsSection(recentTransactions, navController)
         }
     }
 }
 
 @Composable
-fun HeaderSection() {
+fun HeaderSection(income: Double = 0.0, expense: Double = 0.0) {
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -172,7 +98,7 @@ fun HeaderSection() {
                         .weight(1f)
                 ) {
                     Text(text = "Income", color = Color.White)
-                    Text(text = "Rp 3,000,000", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(text = formatToRupiah(income), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(
@@ -180,7 +106,7 @@ fun HeaderSection() {
                         .weight(1f)
                 ) {
                     Text(text = "Spending", color = Color.White)
-                    Text(text = "Rp 1,000,000", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(text = formatToRupiah(expense), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
                 }
             }
         }
@@ -223,7 +149,17 @@ fun ChartSection(data: List<ChartData>) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column() {
-                            Text(text = transaction.label, style = MaterialTheme.typography.bodySmall)
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box( modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(color = transaction.color)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(text = transaction.label, style = MaterialTheme.typography.bodySmall)
+                            }
                             Text(text= formatToRupiah(transaction.total.toDouble()), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
                         }
 
@@ -236,7 +172,7 @@ fun ChartSection(data: List<ChartData>) {
 }
 
 @Composable
-fun RecentTransactionsSection(transactions: List<TransactionEntity>) {
+fun RecentTransactionsSection(transactions: List<TransactionEntity>, navController: NavHostController) {
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -245,7 +181,9 @@ fun RecentTransactionsSection(transactions: List<TransactionEntity>) {
     ) {
         Text(text = "Recent Cash Flow", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 16.dp))
         transactions.forEach { transaction ->
-            TransactionItem(transaction = transaction)
+            TransactionItem(transaction = transaction) {
+                navController.navigate("editTransaction/${transaction.id}")
+            }
         }
     }
 }

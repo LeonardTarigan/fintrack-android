@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.project.fintrack.data.models.MonthlyTransactions
 import com.project.fintrack.data.models.TopSpending
 import com.project.fintrack.presentation.components.TopSpendingItem
@@ -34,7 +35,7 @@ import com.project.fintrack.ui.theme.FinTrackRed
 import com.project.fintrack.utils.formatToRupiah
 
 @Composable
-fun ReportScreen(modifier: Modifier = Modifier, viewModel: TransactionReportViewModel) {
+fun ReportScreen(viewModel: TransactionReportViewModel, navController: NavController) {
     val topSpendingData = viewModel.topSpendingData.value
     val monthlyTransactions = viewModel.monthlyTransactions.value
 
@@ -49,7 +50,7 @@ fun ReportScreen(modifier: Modifier = Modifier, viewModel: TransactionReportView
             TopSpendingSection(topSpendingData)
         }
         if (monthlyTransactions != null) {
-            MonthlyTransactionsSection(monthlyTransactions)
+            MonthlyTransactionsSection(monthlyTransactions, navController)
         }
     }
 }
@@ -161,7 +162,7 @@ fun TopSpendingSection(data: List<TopSpending>) {
 }
 
 @Composable
-fun MonthlyTransactionsSection(data: List<MonthlyTransactions>) {
+fun MonthlyTransactionsSection(data: List<MonthlyTransactions>, navController: NavController) {
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -178,7 +179,9 @@ fun MonthlyTransactionsSection(data: List<MonthlyTransactions>) {
                     color = FinTrackGrey
                 )
                 monthlyItem.transactions.forEach {transaction ->
-                    TransactionItem(transaction)
+                    TransactionItem(transaction = transaction) {
+                        navController.navigate("editTransaction/${transaction.id}")
+                    }
                 }
             }
         }
