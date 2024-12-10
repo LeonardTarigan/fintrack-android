@@ -18,7 +18,7 @@ fun getCategoryColor(category: TransactionCategory): Color {
         TransactionCategory.EDUCATION -> FinTrackGreen
 
         TransactionCategory.SHOPPING,
-        TransactionCategory.TRAVEL -> FinTrackRed
+        TransactionCategory.TRAVEL, -> FinTrackRed
 
         TransactionCategory.UTILITIES,
         TransactionCategory.HOUSING,

@@ -35,24 +35,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.project.fintrack.data.models.ChartData
-import com.project.fintrack.data.models.TransactionCategory
 import com.project.fintrack.data.models.TransactionEntity
-import com.project.fintrack.data.models.TransactionType
 import com.project.fintrack.presentation.components.TransactionItem
 import com.project.fintrack.presentation.viewmodels.HomeViewModel
-import com.project.fintrack.ui.theme.FinTrackGreen
 import com.project.fintrack.ui.theme.FinTrackPrimary
-import com.project.fintrack.ui.theme.FinTrackRed
-import com.project.fintrack.utils.formatDate
 import com.project.fintrack.utils.formatToRupiah
-import com.project.fintrack.utils.getCategoryColor
-import java.util.Date
+
 
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
     val recentTransactions = viewModel.recentTransactions.value
     val chartData = viewModel.chartData.value
+    val balanceReport = viewModel.balanceReport.value
 
     Column(
         modifier = Modifier
@@ -60,7 +55,12 @@ fun HomeScreen(viewModel: HomeViewModel) {
             .padding(bottom = 52.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        HeaderSection()
+        if (balanceReport != null) {
+            HeaderSection(
+                income = balanceReport.income,
+                expense = balanceReport.expense
+            )
+        }
         if (chartData != null) {
             ChartSection(chartData)
         }
@@ -71,7 +71,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
 }
 
 @Composable
-fun HeaderSection() {
+fun HeaderSection(income: Double = 0.0, expense: Double = 0.0) {
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -100,7 +100,7 @@ fun HeaderSection() {
                         .weight(1f)
                 ) {
                     Text(text = "Income", color = Color.White)
-                    Text(text = "Rp 3,000,000", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(text = formatToRupiah(income), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(
@@ -108,7 +108,7 @@ fun HeaderSection() {
                         .weight(1f)
                 ) {
                     Text(text = "Spending", color = Color.White)
-                    Text(text = "Rp 1,000,000", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(text = formatToRupiah(expense), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
                 }
             }
         }
@@ -151,7 +151,17 @@ fun ChartSection(data: List<ChartData>) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column() {
-                            Text(text = transaction.label, style = MaterialTheme.typography.bodySmall)
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box( modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(color = transaction.color)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(text = transaction.label, style = MaterialTheme.typography.bodySmall)
+                            }
                             Text(text= formatToRupiah(transaction.total.toDouble()), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
                         }
 

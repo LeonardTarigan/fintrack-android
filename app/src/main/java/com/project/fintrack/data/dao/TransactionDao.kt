@@ -10,7 +10,7 @@ import com.project.fintrack.data.models.TransactionEntity
 
 @Dao
 interface TransactionDao {
-    @Query("SELECT * FROM transactions")
+    @Query("SELECT * FROM transactions ORDER BY date DESC")
     fun getAll(): List<TransactionEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

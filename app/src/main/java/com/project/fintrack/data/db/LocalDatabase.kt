@@ -9,7 +9,7 @@ import com.project.fintrack.data.dao.TransactionDao
 import com.project.fintrack.data.models.TransactionEntity
 import com.project.fintrack.utils.Converters
 
-@Database(entities = [TransactionEntity::class], version = 1)
+@Database(entities = [TransactionEntity::class], version = 2)
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao

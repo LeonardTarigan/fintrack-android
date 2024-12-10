@@ -11,5 +11,5 @@ enum class TransactionCategory{
     TRAVEL,
     HOUSING,
     INVESTMENT,
-    SALARY
+    SALARY,
 }
