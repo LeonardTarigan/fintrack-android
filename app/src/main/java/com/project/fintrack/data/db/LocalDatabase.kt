@@ -9,26 +9,28 @@ import com.project.fintrack.data.dao.TransactionDao
 import com.project.fintrack.data.models.TransactionEntity
 import com.project.fintrack.utils.Converters
 
-@Database(entities = [TransactionEntity::class], version = 1, exportSchema = false)
+@Database(entities = [TransactionEntity::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
 
     companion object {
         @Volatile
-        private var INSTANCE: LocalDatabase? = null
+        private var instance: LocalDatabase? = null
 
-        fun getDatabase(context: Context): LocalDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
+       fun getInstance(context: Context): LocalDatabase {
+           if (instance == null) {
+                instance = Room.databaseBuilder(
+                    context,
                     LocalDatabase::class.java,
-                    "transaction_database"
-                ).fallbackToDestructiveMigration()
+                    "fintrack_database"
+                )
+                    .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
                     .build()
-                INSTANCE = instance
-                instance
-            }
-        }
+           }
+
+           return instance!!
+       }
     }
 }

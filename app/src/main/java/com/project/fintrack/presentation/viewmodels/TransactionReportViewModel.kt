@@ -9,11 +9,11 @@ import com.project.fintrack.data.models.TopSpending
 import com.project.fintrack.data.models.TransactionCategory
 import com.project.fintrack.data.models.TransactionEntity
 import com.project.fintrack.data.models.TransactionType
+import com.project.fintrack.data.repository.Repository
 import kotlinx.coroutines.launch
 import java.util.Date
 
-class TransactionReportViewModel: ViewModel() {
-    //    val repository: Repository = Repository()
+class TransactionReportViewModel(private val repository: Repository) : ViewModel() {
 
     private val _topSpendingData = MutableLiveData<List<TopSpending>>(emptyList())
     private val _monthlyTransactions = MutableLiveData<List<MonthlyTransactions>>(emptyList())

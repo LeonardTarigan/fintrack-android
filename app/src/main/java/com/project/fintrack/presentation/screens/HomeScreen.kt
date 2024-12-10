@@ -25,8 +25,9 @@ import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -47,82 +48,9 @@ import com.project.fintrack.utils.formatToRupiah
 import com.project.fintrack.utils.getCategoryColor
 import java.util.Date
 
-//val transactionsDummy = listOf(
-//    TransactionEntity(
-//        id = 1,
-//        amount = 50000.0,
-//        date = Date(2024, 11, 15), // November 15, 2024
-//        description = "Shopping",
-//        category = TransactionCategory.SHOPPING,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 2,
-//        amount = 30000.0,
-//        date = Date(2024, 11, 15),
-//        description = "Food",
-//        category = TransactionCategory.FOOD,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 3,
-//        amount = 2000000.0,
-//        date = Date(2024, 11, 14),
-//        description = "Investment",
-//        category = TransactionCategory.INVESTMENT,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 4,
-//        amount = 45000.0,
-//        date = Date(2024, 11, 14),
-//        description = "Entertainment",
-//        category = TransactionCategory.ENTERTAINMENT,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 5,
-//        amount = 25000.0,
-//        date = Date(2024, 11, 13),
-//        description = "Food",
-//        category = TransactionCategory.SALARY,
-//        type = TransactionType.INCOME
-//    ),
-//    TransactionEntity(
-//        id = 6,
-//        amount = 25000.0,
-//        date = Date(2024, 11, 13),
-//        description = "Food",
-//        category = TransactionCategory.FOOD,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 7,
-//        amount = 25000.0,
-//        date = Date(2024, 11, 13),
-//        description = "Food",
-//        category = TransactionCategory.FOOD,
-//        type = TransactionType.EXPENSE
-//    ),
-//    TransactionEntity(
-//        id = 8,
-//        amount = 25000.0,
-//        date = Date(2024, 11, 13),
-//        description = "Food",
-//        category = TransactionCategory.SALARY,
-//        type = TransactionType.INCOME
-//    )
-//)
-//
-//val chartDataDummy = listOf(
-//    ChartData("Food", 600000, Color.Red, 60),
-//    ChartData("Entertainment", 600000, Color.Red, 20),
-//    ChartData("Education", 600000, Color.Red, 10),
-//    ChartData("Others", 600000, Color.Red, 10),
-//)
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel) {
     val recentTransactions = viewModel.recentTransactions.value
     val chartData = viewModel.chartData.value
 

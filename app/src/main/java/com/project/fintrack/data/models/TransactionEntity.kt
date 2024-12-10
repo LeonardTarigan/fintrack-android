@@ -1,6 +1,5 @@
 package com.project.fintrack.data.models
 
-
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.Date

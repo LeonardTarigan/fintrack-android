@@ -11,14 +11,14 @@ import com.project.fintrack.data.models.TransactionEntity
 @Dao
 interface TransactionDao {
     @Query("SELECT * FROM transactions")
-    suspend fun getAll(): List<TransactionEntity>
+    fun getAll(): List<TransactionEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(transaction: TransactionEntity)
+    fun insert(transaction: TransactionEntity)
 
     @Update
-    suspend fun update(transaction: TransactionEntity)
+    fun update(transaction: TransactionEntity)
 
     @Delete
-    suspend fun delete(transaction: TransactionEntity)
+    fun delete(transaction: TransactionEntity)
 }

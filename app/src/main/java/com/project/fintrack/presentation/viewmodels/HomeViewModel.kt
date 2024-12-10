@@ -1,5 +1,7 @@
 package com.project.fintrack.presentation.viewmodels
 
+import android.app.Application
+import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,8 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
 
-class HomeViewModel : ViewModel() {
-//    val repository: Repository = Repository()
+class HomeViewModel(private val repository: Repository) : ViewModel() {
 
     private val _recentTransactions = MutableLiveData<List<TransactionEntity>>(emptyList())
     private val _chartData = MutableLiveData<List<ChartData>>(emptyList())
@@ -25,60 +26,66 @@ class HomeViewModel : ViewModel() {
     val chartData: LiveData<List<ChartData>> = _chartData
 
     init {
-        loadDummyData()
+        getRecentTransactions()
     }
 
-    private fun loadDummyData() {
+    private fun getRecentTransactions() {
         viewModelScope.launch {
-            _recentTransactions.value = listOf(
-                TransactionEntity(
-                    id = 1,
-                    amount = 50000.0,
-                    date = Date(2024, 11, 15), // November 15, 2024
-                    description = "Shopping",
-                    category = TransactionCategory.SHOPPING,
-                    type = TransactionType.EXPENSE
-                ),
-                TransactionEntity(
-                    id = 2,
-                    amount = 30000.0,
-                    date = Date(2024, 11, 15),
-                    description = "Food",
-                    category = TransactionCategory.FOOD,
-                    type = TransactionType.EXPENSE
-                ),
-                TransactionEntity(
-                    id = 3,
-                    amount = 2000000.0,
-                    date = Date(2024, 11, 14),
-                    description = "Investment",
-                    category = TransactionCategory.INVESTMENT,
-                    type = TransactionType.EXPENSE
-                ),
-                TransactionEntity(
-                    id = 4,
-                    amount = 45000.0,
-                    date = Date(2024, 11, 14),
-                    description = "Entertainment",
-                    category = TransactionCategory.ENTERTAINMENT,
-                    type = TransactionType.EXPENSE
-                ),
-                TransactionEntity(
-                    id = 5,
-                    amount = 25000.0,
-                    date = Date(2024, 11, 13),
-                    description = "Food",
-                    category = TransactionCategory.FOOD,
-                    type = TransactionType.EXPENSE
-                )
-            )
-
-            _chartData.value = listOf(
-                ChartData("Food", 600000, Color.Red, 60),
-                ChartData("Entertainment", 600000, Color.Red, 20),
-                ChartData("Education", 600000, Color.Red, 10),
-                ChartData("Others", 600000, Color.Red, 10),
-            )
+            _recentTransactions.value = repository.getAllTransactions()
         }
     }
+//
+//    private fun loadDummyData() {
+//        viewModelScope.launch {
+//            _recentTransactions.value = listOf(
+//                TransactionEntity(
+//                    id = 1,
+//                    amount = 50000.0,
+//                    date = Date(2024, 11, 15), // November 15, 2024
+//                    description = "Shopping",
+//                    category = TransactionCategory.SHOPPING,
+//                    type = TransactionType.EXPENSE
+//                ),
+//                TransactionEntity(
+//                    id = 2,
+//                    amount = 30000.0,
+//                    date = Date(2024, 11, 15),
+//                    description = "Food",
+//                    category = TransactionCategory.FOOD,
+//                    type = TransactionType.EXPENSE
+//                ),
+//                TransactionEntity(
+//                    id = 3,
+//                    amount = 2000000.0,
+//                    date = Date(2024, 11, 14),
+//                    description = "Investment",
+//                    category = TransactionCategory.INVESTMENT,
+//                    type = TransactionType.EXPENSE
+//                ),
+//                TransactionEntity(
+//                    id = 4,
+//                    amount = 45000.0,
+//                    date = Date(2024, 11, 14),
+//                    description = "Entertainment",
+//                    category = TransactionCategory.ENTERTAINMENT,
+//                    type = TransactionType.EXPENSE
+//                ),
+//                TransactionEntity(
+//                    id = 5,
+//                    amount = 25000.0,
+//                    date = Date(2024, 11, 13),
+//                    description = "Food",
+//                    category = TransactionCategory.FOOD,
+//                    type = TransactionType.EXPENSE
+//                )
+//            )
+//
+//            _chartData.value = listOf(
+//                ChartData("Food", 600000, Color.Red, 60),
+//                ChartData("Entertainment", 600000, Color.Red, 20),
+//                ChartData("Education", 600000, Color.Red, 10),
+//                ChartData("Others", 600000, Color.Red, 10),
+//            )
+//        }
+//    }
 }

@@ -34,7 +34,7 @@ import com.project.fintrack.ui.theme.FinTrackRed
 import com.project.fintrack.utils.formatToRupiah
 
 @Composable
-fun ReportScreen(modifier: Modifier = Modifier, viewModel: TransactionReportViewModel) {
+fun ReportScreen(viewModel: TransactionReportViewModel) {
     val topSpendingData = viewModel.topSpendingData.value
     val monthlyTransactions = viewModel.monthlyTransactions.value
 

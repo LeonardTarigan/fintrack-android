@@ -18,9 +18,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.project.fintrack.data.db.LocalDatabase
 import com.project.fintrack.data.models.NavItem
+import com.project.fintrack.data.repository.Repository
 import com.project.fintrack.presentation.screens.CreateTransactionScreen
 import com.project.fintrack.presentation.screens.HomeScreen
 import com.project.fintrack.presentation.screens.ReportScreen
@@ -43,7 +46,7 @@ fun MainLayout(modifier: Modifier = Modifier, activity: ComponentActivity) {
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar {
-                navItems.forEachIndexed {index, navItem ->
+                navItems.forEachIndexed { index, navItem ->
                     NavigationBarItem(
                         selected = selectedIndex == index,
                         onClick = { selectedIndex = index },
@@ -64,9 +67,13 @@ fun MainLayout(modifier: Modifier = Modifier, activity: ComponentActivity) {
 
 @Composable
 fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int, activity: ComponentActivity) {
+    val context = LocalContext.current
+    val db = LocalDatabase.getInstance(context)
+    val repository = Repository(db)
+
     when(selectedIndex) {
-        0 -> HomeScreen(modifier = modifier, viewModel = ViewModelProvider(activity)[HomeViewModel::class.java])
+        0 -> HomeScreen(viewModel = HomeViewModel(repository))
         1 -> CreateTransactionScreen()
-        2 -> ReportScreen(modifier = modifier, viewModel = ViewModelProvider(activity)[TransactionReportViewModel::class.java])
+        2 -> ReportScreen(viewModel = TransactionReportViewModel(repository))
     }
 }
