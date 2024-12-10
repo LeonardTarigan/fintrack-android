@@ -11,11 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import com.project.fintrack.data.models.TransactionCategory
+import com.project.fintrack.data.models.TransactionEntity
+import com.project.fintrack.data.models.TransactionType
+import com.project.fintrack.presentation.viewmodels.CreateTransactionViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun CreateTransactionScreen() {
+fun CreateTransactionScreen(viewModel: CreateTransactionViewModel) {
     var transactionType by remember { mutableStateOf("Spending") }
     var category by remember { mutableStateOf("Entertainment") }
     var amount by remember { mutableStateOf("") }
@@ -23,6 +28,7 @@ fun CreateTransactionScreen() {
     var notes by remember { mutableStateOf("") }
     var isTypeDropdownExpanded by remember { mutableStateOf(false) }
     var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
+
 
     // Context for DatePickerDialog
     val context = LocalContext.current
@@ -141,7 +147,22 @@ fun CreateTransactionScreen() {
         Button(
             onClick = {
                 // Logic to save transaction
+                if(transactionType == "Spending"){
+                    transactionType = "EXPENSE"
+                } else{
+                    transactionType = "INCOME"
+                }
                 println("Transaction Saved: Type=$transactionType, Category=$category, Amount=$amount, Date=$date, Notes=$notes")
+                val transaction = TransactionEntity(
+                    type = TransactionType.valueOf(transactionType),
+                    category = TransactionCategory.valueOf(category.toUpperCase()),
+                    amount = amount.toDoubleOrNull() ?: 0.0,
+                    date = Date(),
+                    description = notes, // Pastikan nama sesuai dengan model
+                    id = 0
+                )
+                viewModel.createTransactions(transaction)
+
             },
             modifier = Modifier
                 .fillMaxWidth()

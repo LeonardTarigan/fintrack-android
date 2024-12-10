@@ -18,6 +18,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,6 +33,7 @@ import com.project.fintrack.presentation.screens.HomeScreen
 import com.project.fintrack.presentation.screens.ReportScreen
 import com.project.fintrack.presentation.viewmodels.HomeViewModel
 import com.project.fintrack.presentation.viewmodels.TransactionReportViewModel
+
 
 @Composable
 fun MainLayout(modifier: Modifier = Modifier, activity: ComponentActivity) {
