@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 
 class CreateTransactionViewModel(private val repository: Repository) : ViewModel() {
 
-
     public fun createTransactions(transactionEntity: TransactionEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.createTransaction(transactionEntity)

@@ -31,6 +31,7 @@ import com.project.fintrack.presentation.screens.CreateTransactionScreen
 import com.project.fintrack.presentation.screens.EditTransactionScreen
 import com.project.fintrack.presentation.screens.HomeScreen
 import com.project.fintrack.presentation.screens.ReportScreen
+import com.project.fintrack.presentation.viewmodels.CreateTransactionViewModel
 import com.project.fintrack.presentation.viewmodels.HomeViewModel
 import com.project.fintrack.presentation.viewmodels.TransactionReportViewModel
 
@@ -84,7 +85,7 @@ fun MainLayout(modifier: Modifier = Modifier, activity: ComponentActivity) {
                 HomeScreen(viewModel = HomeViewModel(repository), navController)
             }
             composable("createTransaction") {
-                CreateTransactionScreen()
+                CreateTransactionScreen(viewModel = CreateTransactionViewModel(repository))
             }
             composable("report") {
                 ReportScreen(viewModel = TransactionReportViewModel(repository), navController)

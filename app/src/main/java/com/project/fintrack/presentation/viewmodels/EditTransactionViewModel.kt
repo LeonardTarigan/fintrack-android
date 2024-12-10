@@ -12,7 +12,7 @@ class EditTransactionViewModel(private val repository: Repository) : ViewModel()
 
     public fun editTransactions(transactionEntity: TransactionEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.editTransaction(transactionEntity)
+            repository.updateTransaction(transactionEntity)
         }
     }
 }
