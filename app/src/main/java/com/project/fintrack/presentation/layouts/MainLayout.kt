@@ -32,6 +32,7 @@ import com.project.fintrack.presentation.screens.EditTransactionScreen
 import com.project.fintrack.presentation.screens.HomeScreen
 import com.project.fintrack.presentation.screens.ReportScreen
 import com.project.fintrack.presentation.viewmodels.CreateTransactionViewModel
+import com.project.fintrack.presentation.viewmodels.EditTransactionViewModel
 import com.project.fintrack.presentation.viewmodels.HomeViewModel
 import com.project.fintrack.presentation.viewmodels.TransactionReportViewModel
 
@@ -93,9 +94,11 @@ fun MainLayout(modifier: Modifier = Modifier, activity: ComponentActivity) {
             composable("editTransaction/{transactionId}") { backStackEntry ->
                 val transactionId = backStackEntry.arguments?.getString("transactionId")?.toInt()
                 if (transactionId != null) {
-                    EditTransactionScreen(transactionId = transactionId)
+                    val editTransactionViewModel = EditTransactionViewModel(repository)
+                    EditTransactionScreen(transactionId = transactionId, viewModel = editTransactionViewModel)
                 }
             }
+
         }
     }
 }

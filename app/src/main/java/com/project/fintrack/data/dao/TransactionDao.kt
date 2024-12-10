@@ -21,4 +21,7 @@ interface TransactionDao {
 
     @Delete
     fun delete(transaction: TransactionEntity)
+
+    @Query("SELECT * FROM transactions WHERE id = :id")
+    fun getTransaction(id: Int): TransactionEntity? // Null-safe jika data tidak ditemukan
 }

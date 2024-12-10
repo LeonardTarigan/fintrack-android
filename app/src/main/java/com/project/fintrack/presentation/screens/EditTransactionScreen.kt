@@ -11,18 +11,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.project.fintrack.presentation.viewmodels.EditTransactionViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Preview
 @Composable
-fun EditTransactionScreen(transactionId: Int) {
+fun EditTransactionScreen(transactionId: Int, viewModel: EditTransactionViewModel) {
+    LaunchedEffect(transactionId) {
+        viewModel.getTransaction(transactionId)
+    }
+    val transaction = viewModel.transaction.value
+
     var transactionType by remember { mutableStateOf("Spending") }
     var category by remember { mutableStateOf("Entertainment") }
-    var amount by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("1000") }
+    var date by remember { mutableStateOf("10 Desember 2024") }
     var notes by remember { mutableStateOf("") }
     var isTypeDropdownExpanded by remember { mutableStateOf(false) }
     var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
@@ -39,7 +45,7 @@ fun EditTransactionScreen(transactionId: Int) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Add Transaction",
+            text = "Edit Transaction",
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.align(Alignment.Start)
         )
@@ -167,6 +173,8 @@ fun EditTransactionScreen(transactionId: Int) {
             Text(text = "Delete")
         }
     }
+
+
 }
 
 // Function to show DatePickerDialog

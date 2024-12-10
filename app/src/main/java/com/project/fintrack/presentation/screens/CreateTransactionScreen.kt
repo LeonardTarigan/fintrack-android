@@ -2,6 +2,7 @@ package com.project.fintrack.presentation.screens
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -11,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import com.project.fintrack.data.models.TransactionCategory
 import com.project.fintrack.data.models.TransactionEntity
 import com.project.fintrack.data.models.TransactionType
 import com.project.fintrack.presentation.viewmodels.CreateTransactionViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,11 +30,12 @@ fun CreateTransactionScreen(viewModel: CreateTransactionViewModel) {
     var isTypeDropdownExpanded by remember { mutableStateOf(false) }
     var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
 
-
     // Context for DatePickerDialog
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
+    // State for Snackbar
+    val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -87,7 +89,7 @@ fun CreateTransactionScreen(viewModel: CreateTransactionViewModel) {
                 expanded = isCategoryDropdownExpanded,
                 onDismissRequest = { isCategoryDropdownExpanded = false }
             ) {
-                listOf("Entertainment", "Food", "Transport", "Other").forEach { cat ->
+                listOf("Entertainment", "Food", "Transportation", "Other").forEach { cat ->
                     DropdownMenuItem(
                         text = { Text(text = cat) },
                         onClick = {
@@ -162,6 +164,13 @@ fun CreateTransactionScreen(viewModel: CreateTransactionViewModel) {
                     id = 0
                 )
                 viewModel.createTransactions(transaction)
+                Toast.makeText(context, "Transaction Saved Successfully", Toast.LENGTH_SHORT).show()
+                // Clear the form
+                transactionType = "Spending"
+                category = "Entertainment"
+                amount = ""
+                date = ""
+                notes = ""
 
             },
             modifier = Modifier
